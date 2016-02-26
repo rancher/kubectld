@@ -5,9 +5,12 @@ import (
 	"github.com/rancher/kubectld/server"
 )
 
-func New() *mux.Router {
+func New(serverURL string) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	router.Methods("GET").Path("/v1-kubectl/{path:.*}").HandlerFunc(server.Get)
-	router.Methods("POST").Path("/v1-kubectl/{command}").HandlerFunc(server.Post)
+	s := &server.Server{
+		Server: serverURL,
+	}
+	router.Methods("GET").Path("/v1-kubectl/{path:.*}").HandlerFunc(s.Get)
+	router.Methods("POST").Path("/v1-kubectl/{command}").HandlerFunc(s.Post)
 	return router
 }
