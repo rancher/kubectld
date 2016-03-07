@@ -12,3 +12,9 @@ import:
   repo: https://github.com/rancher/libcompose.git
 - package: gopkg.in/yaml.v2
   version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
+- package: github.com/flynn/go-shlex
+  version: 3f9db97f856818214da2e1057f8ad84803971cff
+- package: github.com/docker/docker
+  version: f39987afe8d611407887b3094c03d6ba6a766a67
+- package: github.com/opencontainers/runc
+  version: b40c7901845dcec5950ecb37cb9de178fc2c0604
