@@ -10,6 +10,7 @@ func New(serverURL string) *mux.Router {
 	s := &server.Server{
 		Server: serverURL,
 	}
+	router.Methods("POST").Path("/v1-kubectl/catalog").HandlerFunc(s.Catalog)
 	router.Methods("GET").Path("/v1-kubectl/{path:.*}").HandlerFunc(s.Get)
 	router.Methods("POST").Path("/v1-kubectl/{command}").HandlerFunc(s.Post)
 	return router
