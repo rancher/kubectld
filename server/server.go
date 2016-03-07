@@ -76,9 +76,9 @@ func (s *Server) Catalog(rw http.ResponseWriter, r *http.Request) {
 		if output.ExitCode > 0 {
 			writeResponse(rw, output, 203)
 			return
-		} else {
-			worked = append(worked, name)
 		}
+
+		worked = append(worked, name)
 	}
 
 	success = true
