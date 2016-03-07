@@ -7,3 +7,8 @@ import:
   version: 446d1c146faa8ed3f4218f056fcd165f6bcfda81
 - package: github.com/ogier/pflag
   version: 45c278ab3607870051a2ea9040bb85fcb8557481
+- package: github.com/docker/libcompose
+  version: e9b7b3c235e0102ac23b1e4b30e64b06974d6edc
+  repo: https://github.com/rancher/libcompose.git
+- package: gopkg.in/yaml.v2
+  version: 49c95bdc21843256fb6c4e0d370a05f24a0bf213
