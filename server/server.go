@@ -10,6 +10,7 @@ import (
 	"github.com/docker/libcompose/project"
 	"github.com/docker/libcompose/utils"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 )
 
 var (
@@ -20,6 +21,8 @@ var (
 		"docker-compose.yml":   true,
 	}
 )
+
+const defaultNamespace = "defaultNamespace"
 
 type Server struct {
 	Server string
@@ -71,8 +74,8 @@ func (s *Server) Catalog(rw http.ResponseWriter, r *http.Request) {
 		if blacklist[name] {
 			continue
 		}
-
-		output = Kubectl(strings.NewReader(file), "-s", s.Server, "create", "-f", "-")
+		modifiedConfig := InjectNamespaceToString(file, r.FormValue(defaultNamespace))
+		output = Kubectl(strings.NewReader(modifiedConfig), "-s", s.Server, "create", "-f", "-")
 		if output.ExitCode > 0 {
 			writeResponse(rw, output, 203)
 			return
@@ -98,7 +101,13 @@ func (s *Server) Get(rw http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Post(rw http.ResponseWriter, r *http.Request) {
 	command := mux.Vars(r)["command"]
-	output := Kubectl(r.Body, "-s", s.Server, command, "-f", "-")
+	b, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		writeError(rw, err)
+		return
+	}
+	modifiedConfig := string(InjectNamespace(b, r.FormValue(defaultNamespace)))
+	output := Kubectl(strings.NewReader(modifiedConfig), "-s", s.Server, command, "-f", "-")
 	writeResponse(rw, output, 203)
 }
 

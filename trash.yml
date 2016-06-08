@@ -18,3 +18,11 @@ import:
   version: f39987afe8d611407887b3094c03d6ba6a766a67
 - package: github.com/opencontainers/runc
   version: b40c7901845dcec5950ecb37cb9de178fc2c0604
+- package: github.com/go-yaml/yaml
+  version: a83829b6f1293c91addabc89d0571c246397bbf4
+- package: github.com/kubernetes/kubernetes
+  version: v1.2.4
+- package: github.com/ghodss/yaml
+  version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
+- package: github.com/golang/glog
+  version: 44145f04b68cf362d9c4df2182967c2275eaefed
