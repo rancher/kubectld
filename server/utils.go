@@ -20,6 +20,9 @@ type KubernetesResource struct {
 	APIVersion string      `json:"apiVersion,omitempty"`
 	Metadata   Metadata    `json:"metadata,omitempty"`
 	Spec       interface{} `json:"spec,omitempty"`
+	Data       interface{} `json:"data,omitempty"`
+	Template   interface{} `json:"template,omitempty"`
+	Items      interface{} `json:"items,omitempty"`
 }
 
 func InjectNamespaceToString(originalConfig string, namespace string) string {
