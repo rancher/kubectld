@@ -1,11 +1,14 @@
-package server
+package stack
 
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/Sirupsen/logrus"
-	utilyaml "github.com/kubernetes/kubernetes/pkg/util/yaml"
+	"fmt"
 	"io"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/docker/libcompose/project"
+	utilyaml "github.com/kubernetes/kubernetes/pkg/util/yaml"
 )
 
 type Metadata struct {
@@ -65,4 +68,16 @@ func InjectNamespace(originalConfig []byte, namespace string) []byte {
 		toReturn = append(toReturn, modifiedConfig...)
 	}
 	return toReturn
+}
+
+type Lookup struct {
+	Vars map[string]string
+}
+
+func (l *Lookup) Lookup(key, serviceName string, config *project.ServiceConfig) []string {
+	ret := l.Vars[key]
+	if ret == "" {
+		return []string{}
+	}
+	return []string{fmt.Sprintf("%s=%s", key, ret)}
 }

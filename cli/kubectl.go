@@ -1,4 +1,4 @@
-package server
+package cli
 
 import (
 	"bytes"
@@ -9,6 +9,14 @@ import (
 
 	"github.com/Sirupsen/logrus"
 )
+
+type ErrExec struct {
+	Output Output
+}
+
+func (e *ErrExec) Error() string {
+	return e.Output.StdErr
+}
 
 type Output struct {
 	ExitCode int    `json:"exitCode"`
@@ -40,7 +48,11 @@ func Kubectl(stdIn io.Reader, args ...string) Output {
 		}
 	}
 
-	logrus.Infof("output: %#v", output)
+	if output.ExitCode == 0 {
+		logrus.Infof("output: %#v", output.StdOut)
+	} else {
+		logrus.Infof("output: %#v", output)
+	}
 
 	return output
 }
