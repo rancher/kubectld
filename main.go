@@ -6,7 +6,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
-	revents "github.com/rancher/go-machine-service/events"
+	revents "github.com/rancher/event-subscriber/events"
 	"github.com/rancher/kubectld/events"
 	"github.com/rancher/kubectld/router"
 	"github.com/rancher/swarm-agent/healthcheck"
@@ -75,7 +75,7 @@ func listenToEvents(server, url, accessKey, secretKey string, workers int) error
 		"ping": (&events.PingHandler{}).Handler,
 	}
 
-	router, err := revents.NewEventRouter("", 0, url, accessKey, secretKey, nil, eventHandlers, "", workers)
+	router, err := revents.NewEventRouter("", 0, url, accessKey, secretKey, nil, eventHandlers, "", workers, revents.DefaultPingConfig)
 	if err != nil {
 		return err
 	}

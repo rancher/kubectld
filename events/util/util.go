@@ -1,11 +1,11 @@
 package util
 
 import (
-	revents "github.com/rancher/go-machine-service/events"
+	"github.com/rancher/event-subscriber/events"
 	"github.com/rancher/go-rancher/client"
 )
 
-func NewReply(event *revents.Event) *client.Publish {
+func NewReply(event *events.Event) *client.Publish {
 	return &client.Publish{
 		Name:         event.ReplyTo,
 		PreviousIds:  []string{event.ID},
@@ -19,7 +19,7 @@ func PublishReply(reply *client.Publish, apiClient *client.RancherClient) error 
 	return err
 }
 
-func CreateAndPublishReply(event *revents.Event, cli *client.RancherClient) error {
+func CreateAndPublishReply(event *events.Event, cli *client.RancherClient) error {
 	reply := NewReply(event)
 	if reply.Name == "" {
 		return nil

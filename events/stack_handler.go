@@ -4,35 +4,35 @@ import (
 	"fmt"
 
 	"github.com/Sirupsen/logrus"
-	revents "github.com/rancher/go-machine-service/events"
+	"github.com/rancher/event-subscriber/events"
 	"github.com/rancher/go-rancher/client"
 	"github.com/rancher/kubectld/events/util"
 	"github.com/rancher/kubectld/stack"
 )
 
-type EventHandlerWithData func(*revents.Event, *client.RancherClient) (map[string]interface{}, error)
+type EventHandlerWithData func(*events.Event, *client.RancherClient) (map[string]interface{}, error)
 
 type StackHandler struct {
 	Server string
 }
 
-func (h *StackHandler) Create(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) Create(event *events.Event, cli *client.RancherClient) error {
 	return h.wrap(event, cli, h.create)
 }
 
-func (h *StackHandler) FinishUpgrade(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) FinishUpgrade(event *events.Event, cli *client.RancherClient) error {
 	return h.wrap(event, cli, h.finishUpgrade)
 }
 
-func (h *StackHandler) Rollback(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) Rollback(event *events.Event, cli *client.RancherClient) error {
 	return h.wrap(event, cli, h.rollback)
 }
 
-func (h *StackHandler) Upgrade(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) Upgrade(event *events.Event, cli *client.RancherClient) error {
 	return h.wrap(event, cli, h.upgrade)
 }
 
-func (h *StackHandler) Remove(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) Remove(event *events.Event, cli *client.RancherClient) error {
 	logrus.Infof("Received event: Name: %s, Event Id: %s, Resource Id: %s", event.Name, event.ID, event.ResourceID)
 	if err := h.remove(event, cli); err != nil {
 		logrus.WithField("EventId", event.ID).Errorf("Failed to delete: %v", err)
@@ -40,7 +40,7 @@ func (h *StackHandler) Remove(event *revents.Event, cli *client.RancherClient) e
 	return util.PublishReply(util.NewReply(event), cli)
 }
 
-func (h *StackHandler) wrap(event *revents.Event, cli *client.RancherClient, fn EventHandlerWithData) error {
+func (h *StackHandler) wrap(event *events.Event, cli *client.RancherClient, fn EventHandlerWithData) error {
 	logrus.Infof("Received event: Name: %s, Event Id: %s, Resource Id: %s", event.Name, event.ID, event.ResourceID)
 	data, err := fn(event, cli)
 	resp := util.NewReply(event)
@@ -53,7 +53,7 @@ func (h *StackHandler) wrap(event *revents.Event, cli *client.RancherClient, fn 
 	return util.PublishReply(resp, cli)
 }
 
-func (h *StackHandler) getInput(event *revents.Event, cli *client.RancherClient) stack.Input {
+func (h *StackHandler) getInput(event *events.Event, cli *client.RancherClient) stack.Input {
 	uuid := util.GetString(event.Data, "environment", "uuid")
 	templates := util.GetStringMap(event.Data, "environment", "data", "fields", "templates")
 	environment := util.GetStringMap(event.Data, "environment", "data", "fields", "environment")
@@ -74,7 +74,7 @@ func (h *StackHandler) getInput(event *revents.Event, cli *client.RancherClient)
 	}
 }
 
-func (h *StackHandler) create(event *revents.Event, cli *client.RancherClient) (map[string]interface{}, error) {
+func (h *StackHandler) create(event *events.Event, cli *client.RancherClient) (map[string]interface{}, error) {
 	input := h.getInput(event, cli)
 	if len(input.Files) == 0 {
 		return nil, nil
@@ -83,7 +83,7 @@ func (h *StackHandler) create(event *revents.Event, cli *client.RancherClient) (
 	return nil, err
 }
 
-func (h *StackHandler) rollback(event *revents.Event, cli *client.RancherClient) (map[string]interface{}, error) {
+func (h *StackHandler) rollback(event *events.Event, cli *client.RancherClient) (map[string]interface{}, error) {
 	_, err := h.create(event, cli)
 	if err != nil {
 		return nil, err
@@ -96,7 +96,7 @@ func (h *StackHandler) rollback(event *revents.Event, cli *client.RancherClient)
 	}, nil
 }
 
-func (h *StackHandler) remove(event *revents.Event, cli *client.RancherClient) error {
+func (h *StackHandler) remove(event *events.Event, cli *client.RancherClient) error {
 	input := h.getInput(event, cli)
 	if len(input.Files) == 0 {
 		return nil
@@ -104,7 +104,7 @@ func (h *StackHandler) remove(event *revents.Event, cli *client.RancherClient) e
 	return stack.Remove(input)
 }
 
-func (h *StackHandler) finishUpgrade(event *revents.Event, cli *client.RancherClient) (map[string]interface{}, error) {
+func (h *StackHandler) finishUpgrade(event *events.Event, cli *client.RancherClient) (map[string]interface{}, error) {
 	fmt.Printf("Finish Upgrade: %#v\n", event.Data)
 	upgradeData := util.GetMap(event.Data, "environment", "data", "fields", "upgrade")
 	if upgradeData == nil {
@@ -117,7 +117,7 @@ func (h *StackHandler) finishUpgrade(event *revents.Event, cli *client.RancherCl
 	}, nil
 }
 
-func (h *StackHandler) upgrade(event *revents.Event, cli *client.RancherClient) (map[string]interface{}, error) {
+func (h *StackHandler) upgrade(event *events.Event, cli *client.RancherClient) (map[string]interface{}, error) {
 	templates := util.GetStringMap(event.Data, "processData", "templates")
 	environment := util.GetStringMap(event.Data, "processData", "environment")
 	externalID := util.GetString(event.Data, "processData", "externalId")
