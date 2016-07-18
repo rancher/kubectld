@@ -1,0 +1,8 @@
+./dist
+./build
+./bin
+./package/swarm
+./package/swarm-agent
+./.dapper
+./dist
+./.trash-cache
