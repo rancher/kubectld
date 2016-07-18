@@ -55,13 +55,20 @@ func (s *Server) Get(rw http.ResponseWriter, r *http.Request) {
 
 func (s *Server) Post(rw http.ResponseWriter, r *http.Request) {
 	command := mux.Vars(r)["command"]
+	inArgs := r.URL.Query()["arg"]
+	args := []string{"-s", s.Server, command}
+	if len(inArgs) > 0 {
+		args = append(args, inArgs...)
+	} else {
+		args = append(args, "-f", "-")
+	}
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		writeError(rw, err)
 		return
 	}
 	modifiedConfig := string(stack.InjectNamespace(b, r.FormValue(defaultNamespace)))
-	output := cli.Kubectl(strings.NewReader(modifiedConfig), "-s", s.Server, command, "-f", "-")
+	output := cli.Kubectl(strings.NewReader(modifiedConfig), args...)
 	writeResponse(rw, output, 203)
 }
 
