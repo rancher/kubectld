@@ -2,7 +2,7 @@ FROM ubuntu:15.10
 RUN apt-get update && \
     apt-get install -y vim wget
 RUN apt-get install -y bash-completion
-RUN wget -O /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl && \
+RUN wget -O /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.4.4/bin/linux/amd64/kubectl && \
     chmod +x /usr/bin/kubectl
 ENV KUBE_SERVER http://localhost:8080
 COPY kubectld /usr/bin/
