@@ -62,12 +62,17 @@ func (s *Server) Post(rw http.ResponseWriter, r *http.Request) {
 	} else {
 		args = append(args, "-f", "-")
 	}
+	ns := r.FormValue(defaultNamespace)
+	if ns != "" {
+		args = append(args, "-n", ns)
+	}
+
 	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		writeError(rw, err)
 		return
 	}
-	modifiedConfig := string(stack.InjectNamespace(b, r.FormValue(defaultNamespace)))
+	modifiedConfig := string(stack.InjectNamespace(b, ns))
 	output := cli.Kubectl(strings.NewReader(modifiedConfig), args...)
 	writeResponse(rw, output, 203)
 }
