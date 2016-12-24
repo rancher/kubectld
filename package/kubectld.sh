@@ -16,4 +16,6 @@ contexts:
 current-context: "Default"
 EOF
 
+/usr/bin/update-rancher-ssl
+
 exec kubectld --server=$SERVER --listen=$LISTEN
