@@ -8,6 +8,9 @@ RUN wget http://storage.googleapis.com/kubernetes-helm/helm-v2.0.0-linux-386.tar
     tar xvzf helm-v2.0.0-linux-386.tar.gz && \
     mv ./linux-386/helm /usr/bin/ && \
     chmod +x /usr/bin/helm
+ENV SSL_SCRIPT_COMMIT 98660ada3d800f653fc1f105771b5173f9d1a019
+RUN wget -O /usr/bin/update-rancher-ssl https://raw.githubusercontent.com/rancher/rancher/${SSL_SCRIPT_COMMIT}/server/bin/update-rancher-ssl && \
+    chmod +x /usr/bin/update-rancher-ssl
 ENV KUBE_SERVER http://localhost:8080
 COPY kubectld /usr/bin/
 COPY kubectld.sh /usr/bin
