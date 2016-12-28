@@ -17,5 +17,6 @@ current-context: "Default"
 EOF
 
 /usr/bin/update-rancher-ssl
+helm init -c
 
 exec kubectld --server=$SERVER --listen=$LISTEN
