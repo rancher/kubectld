@@ -21,6 +21,5 @@ ENV HOME /tmp
 RUN cp /etc/skel/.bashrc /tmp/ && \
     echo 'PS1="> "' >> /tmp/.bashrc && \
     echo . /etc/bash_completion >> /tmp/.bashrc
-USER nobody
 WORKDIR $HOME 
 CMD ["kubectld.sh"]
