@@ -1,5 +1,7 @@
 #!/bin/bash
 
+/usr/bin/update-rancher-ssl
+
 mkdir -p ${HOME}/.kube
 cat > ${HOME}/.kube/config << EOF
 apiVersion: v1
@@ -15,8 +17,9 @@ contexts:
   name: "Default"
 current-context: "Default"
 EOF
+chown -R nobody:nogroup ${HOME}/.kube
 
-/usr/bin/update-rancher-ssl
 helm init -c
+chown -R nobody:nogroup ${HOME}/.helm
 
-exec kubectld --server=$SERVER --listen=$LISTEN
+exec su -s /bin/bash nobody -p -c 'exec kubectld --server=$SERVER --listen=$LISTEN'
