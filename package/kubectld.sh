@@ -22,4 +22,4 @@ chown -R nobody:nogroup ${HOME}/.kube
 helm init -c
 chown -R nobody:nogroup ${HOME}/.helm
 
-exec su -s /bin/bash nobody -p -c 'exec kubectld --server=$SERVER --listen=$LISTEN'
+exec su -s /bin/bash nobody -p -c 'exec kubectld' 
