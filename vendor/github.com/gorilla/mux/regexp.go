@@ -24,7 +24,11 @@ import (
 // Previously we accepted only Python-like identifiers for variable
 // names ([a-zA-Z_][a-zA-Z0-9_]*), but currently the only restriction is that
 // name and pattern can't be empty, and names can't contain a colon.
+<<<<<<< HEAD
 func newRouteRegexp(tpl string, matchHost, matchPrefix, matchQuery, strictSlash bool) (*routeRegexp, error) {
+=======
+func newRouteRegexp(tpl string, matchHost, matchPrefix, matchQuery, strictSlash, useEncodedPath bool) (*routeRegexp, error) {
+>>>>>>> a24f8b0... add support for installing helm charts
 	// Check if it is well-formed.
 	idxs, errBraces := braceIndices(tpl)
 	if errBraces != nil {
@@ -73,14 +77,24 @@ func newRouteRegexp(tpl string, matchHost, matchPrefix, matchQuery, strictSlash 
 				tpl[idxs[i]:end])
 		}
 		// Build the regexp pattern.
+<<<<<<< HEAD
 		varIdx := i / 2
 		fmt.Fprintf(pattern, "%s(?P<%s>%s)", regexp.QuoteMeta(raw), varGroupName(varIdx), patt)
+=======
+		fmt.Fprintf(pattern, "%s(?P<%s>%s)", regexp.QuoteMeta(raw), varGroupName(i/2), patt)
+
+>>>>>>> a24f8b0... add support for installing helm charts
 		// Build the reverse template.
 		fmt.Fprintf(reverse, "%s%%s", raw)
 
 		// Append variable name and compiled pattern.
+<<<<<<< HEAD
 		varsN[varIdx] = name
 		varsR[varIdx], err = regexp.Compile(fmt.Sprintf("^%s$", patt))
+=======
+		varsN[i/2] = name
+		varsR[i/2], err = regexp.Compile(fmt.Sprintf("^%s$", patt))
+>>>>>>> a24f8b0... add support for installing helm charts
 		if err != nil {
 			return nil, err
 		}
@@ -109,6 +123,7 @@ func newRouteRegexp(tpl string, matchHost, matchPrefix, matchQuery, strictSlash 
 	if errCompile != nil {
 		return nil, errCompile
 	}
+<<<<<<< HEAD
 	// Done!
 	return &routeRegexp{
 		template:    template,
@@ -119,6 +134,26 @@ func newRouteRegexp(tpl string, matchHost, matchPrefix, matchQuery, strictSlash 
 		reverse:     reverse.String(),
 		varsN:       varsN,
 		varsR:       varsR,
+=======
+
+	// Check for capturing groups which used to work in older versions
+	if reg.NumSubexp() != len(idxs)/2 {
+		panic(fmt.Sprintf("route %s contains capture groups in its regexp. ", template) +
+			"Only non-capturing groups are accepted: e.g. (?:pattern) instead of (pattern)")
+	}
+
+	// Done!
+	return &routeRegexp{
+		template:       template,
+		matchHost:      matchHost,
+		matchQuery:     matchQuery,
+		strictSlash:    strictSlash,
+		useEncodedPath: useEncodedPath,
+		regexp:         reg,
+		reverse:        reverse.String(),
+		varsN:          varsN,
+		varsR:          varsR,
+>>>>>>> a24f8b0... add support for installing helm charts
 	}, nil
 }
 
@@ -133,6 +168,12 @@ type routeRegexp struct {
 	matchQuery bool
 	// The strictSlash value defined on the route, but disabled if PathPrefix was used.
 	strictSlash bool
+<<<<<<< HEAD
+=======
+	// Determines whether to use encoded path from getPath function or unencoded
+	// req.URL.Path for path matching
+	useEncodedPath bool
+>>>>>>> a24f8b0... add support for installing helm charts
 	// Expanded regexp.
 	regexp *regexp.Regexp
 	// Reverse template.
@@ -148,10 +189,21 @@ func (r *routeRegexp) Match(req *http.Request, match *RouteMatch) bool {
 	if !r.matchHost {
 		if r.matchQuery {
 			return r.matchQueryString(req)
+<<<<<<< HEAD
 		} else {
 			return r.regexp.MatchString(req.URL.Path)
 		}
 	}
+=======
+		}
+		path := req.URL.Path
+		if r.useEncodedPath {
+			path = getPath(req)
+		}
+		return r.regexp.MatchString(path)
+	}
+
+>>>>>>> a24f8b0... add support for installing helm charts
 	return r.regexp.MatchString(getHost(req))
 }
 
@@ -181,10 +233,17 @@ func (r *routeRegexp) url(values map[string]string) (string, error) {
 	return rv, nil
 }
 
+<<<<<<< HEAD
 // getUrlQuery returns a single query parameter from a request URL.
 // For a URL with foo=bar&baz=ding, we return only the relevant key
 // value pair for the routeRegexp.
 func (r *routeRegexp) getUrlQuery(req *http.Request) string {
+=======
+// getURLQuery returns a single query parameter from a request URL.
+// For a URL with foo=bar&baz=ding, we return only the relevant key
+// value pair for the routeRegexp.
+func (r *routeRegexp) getURLQuery(req *http.Request) string {
+>>>>>>> a24f8b0... add support for installing helm charts
 	if !r.matchQuery {
 		return ""
 	}
@@ -198,14 +257,22 @@ func (r *routeRegexp) getUrlQuery(req *http.Request) string {
 }
 
 func (r *routeRegexp) matchQueryString(req *http.Request) bool {
+<<<<<<< HEAD
 	return r.regexp.MatchString(r.getUrlQuery(req))
+=======
+	return r.regexp.MatchString(r.getURLQuery(req))
+>>>>>>> a24f8b0... add support for installing helm charts
 }
 
 // braceIndices returns the first level curly brace indices from a string.
 // It returns an error in case of unbalanced braces.
 func braceIndices(s string) ([]int, error) {
 	var level, idx int
+<<<<<<< HEAD
 	idxs := make([]int, 0)
+=======
+	var idxs []int
+>>>>>>> a24f8b0... add support for installing helm charts
 	for i := 0; i < len(s); i++ {
 		switch s[i] {
 		case '{':
@@ -246,6 +313,7 @@ type routeRegexpGroup struct {
 func (v *routeRegexpGroup) setMatch(req *http.Request, m *RouteMatch, r *Route) {
 	// Store host variables.
 	if v.host != nil {
+<<<<<<< HEAD
 		hostVars := v.host.regexp.FindStringSubmatch(getHost(req))
 		if hostVars != nil {
 			subexpNames := v.host.regexp.SubexpNames()
@@ -273,6 +341,26 @@ func (v *routeRegexpGroup) setMatch(req *http.Request, m *RouteMatch, r *Route) 
 			// Check if we should redirect.
 			if v.path.strictSlash {
 				p1 := strings.HasSuffix(req.URL.Path, "/")
+=======
+		host := getHost(req)
+		matches := v.host.regexp.FindStringSubmatchIndex(host)
+		if len(matches) > 0 {
+			extractVars(host, matches, v.host.varsN, m.Vars)
+		}
+	}
+	path := req.URL.Path
+	if r.useEncodedPath {
+		path = getPath(req)
+	}
+	// Store path variables.
+	if v.path != nil {
+		matches := v.path.regexp.FindStringSubmatchIndex(path)
+		if len(matches) > 0 {
+			extractVars(path, matches, v.path.varsN, m.Vars)
+			// Check if we should redirect.
+			if v.path.strictSlash {
+				p1 := strings.HasSuffix(path, "/")
+>>>>>>> a24f8b0... add support for installing helm charts
 				p2 := strings.HasSuffix(v.path.template, "/")
 				if p1 != p2 {
 					u, _ := url.Parse(req.URL.String())
@@ -288,6 +376,7 @@ func (v *routeRegexpGroup) setMatch(req *http.Request, m *RouteMatch, r *Route) 
 	}
 	// Store query string variables.
 	for _, q := range v.queries {
+<<<<<<< HEAD
 		queryVars := q.regexp.FindStringSubmatch(q.getUrlQuery(req))
 		if queryVars != nil {
 			subexpNames := q.regexp.SubexpNames()
@@ -298,6 +387,12 @@ func (v *routeRegexpGroup) setMatch(req *http.Request, m *RouteMatch, r *Route) 
 					varName++
 				}
 			}
+=======
+		queryURL := q.getURLQuery(req)
+		matches := q.regexp.FindStringSubmatchIndex(queryURL)
+		if len(matches) > 0 {
+			extractVars(queryURL, matches, q.varsN, m.Vars)
+>>>>>>> a24f8b0... add support for installing helm charts
 		}
 	}
 }
@@ -315,3 +410,12 @@ func getHost(r *http.Request) string {
 	return host
 
 }
+<<<<<<< HEAD
+=======
+
+func extractVars(input string, matches []int, names []string, output map[string]string) {
+	for i, name := range names {
+		output[name] = input[matches[2*i+2]:matches[2*i+3]]
+	}
+}
+>>>>>>> a24f8b0... add support for installing helm charts

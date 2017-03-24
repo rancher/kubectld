@@ -26,6 +26,14 @@ type Route struct {
 	// If true, when the path pattern is "/path/", accessing "/path" will
 	// redirect to the former and vice versa.
 	strictSlash bool
+<<<<<<< HEAD
+=======
+	// If true, when the path pattern is "/path//to", accessing "/path//to"
+	// will not redirect
+	skipClean bool
+	// If true, "/path/foo%2Fbar/to" will match the path "/path/{var}/to"
+	useEncodedPath bool
+>>>>>>> a24f8b0... add support for installing helm charts
 	// If true, this route never matches: it is only used to build URLs.
 	buildOnly bool
 	// The name used to build URLs.
@@ -36,6 +44,13 @@ type Route struct {
 	buildVarsFunc BuildVarsFunc
 }
 
+<<<<<<< HEAD
+=======
+func (r *Route) SkipClean() bool {
+	return r.skipClean
+}
+
+>>>>>>> a24f8b0... add support for installing helm charts
 // Match matches the route against the request.
 func (r *Route) Match(req *http.Request, match *RouteMatch) bool {
 	if r.buildOnly || r.err != nil {
@@ -144,14 +159,22 @@ func (r *Route) addRegexpMatcher(tpl string, matchHost, matchPrefix, matchQuery 
 	}
 	r.regexp = r.getRegexpGroup()
 	if !matchHost && !matchQuery {
+<<<<<<< HEAD
 		if len(tpl) == 0 || tpl[0] != '/' {
+=======
+		if tpl == "/" && (len(tpl) == 0 || tpl[0] != '/') {
+>>>>>>> a24f8b0... add support for installing helm charts
 			return fmt.Errorf("mux: path must start with a slash, got %q", tpl)
 		}
 		if r.regexp.path != nil {
 			tpl = strings.TrimRight(r.regexp.path.template, "/") + tpl
 		}
 	}
+<<<<<<< HEAD
 	rr, err := newRouteRegexp(tpl, matchHost, matchPrefix, matchQuery, r.strictSlash)
+=======
+	rr, err := newRouteRegexp(tpl, matchHost, matchPrefix, matchQuery, r.strictSlash, r.useEncodedPath)
+>>>>>>> a24f8b0... add support for installing helm charts
 	if err != nil {
 		return err
 	}
@@ -217,8 +240,14 @@ func (m headerRegexMatcher) Match(r *http.Request, match *RouteMatch) bool {
 	return matchMapWithRegex(m, r.Header, true)
 }
 
+<<<<<<< HEAD
 // Regular expressions can be used with headers as well.
 // It accepts a sequence of key/value pairs, where the value has regex support. For example
+=======
+// HeadersRegexp accepts a sequence of key/value pairs, where the value has regex
+// support. For example:
+//
+>>>>>>> a24f8b0... add support for installing helm charts
 //     r := mux.NewRouter()
 //     r.HeadersRegexp("Content-Type", "application/(text|json)",
 //               "X-Requested-With", "XMLHttpRequest")
@@ -263,6 +292,10 @@ func (r *Route) Host(tpl string) *Route {
 // MatcherFunc is the function signature used by custom matchers.
 type MatcherFunc func(*http.Request, *RouteMatch) bool
 
+<<<<<<< HEAD
+=======
+// Match returns the match for a given request.
+>>>>>>> a24f8b0... add support for installing helm charts
 func (m MatcherFunc) Match(r *http.Request, match *RouteMatch) bool {
 	return m(r, match)
 }
@@ -532,6 +565,39 @@ func (r *Route) URLPath(pairs ...string) (*url.URL, error) {
 	}, nil
 }
 
+<<<<<<< HEAD
+=======
+// GetPathTemplate returns the template used to build the
+// route match.
+// This is useful for building simple REST API documentation and for instrumentation
+// against third-party services.
+// An error will be returned if the route does not define a path.
+func (r *Route) GetPathTemplate() (string, error) {
+	if r.err != nil {
+		return "", r.err
+	}
+	if r.regexp == nil || r.regexp.path == nil {
+		return "", errors.New("mux: route doesn't have a path")
+	}
+	return r.regexp.path.template, nil
+}
+
+// GetHostTemplate returns the template used to build the
+// route match.
+// This is useful for building simple REST API documentation and for instrumentation
+// against third-party services.
+// An error will be returned if the route does not define a host.
+func (r *Route) GetHostTemplate() (string, error) {
+	if r.err != nil {
+		return "", r.err
+	}
+	if r.regexp == nil || r.regexp.host == nil {
+		return "", errors.New("mux: route doesn't have a host")
+	}
+	return r.regexp.host.template, nil
+}
+
+>>>>>>> a24f8b0... add support for installing helm charts
 // prepareVars converts the route variable pairs into a map. If the route has a
 // BuildVarsFunc, it is invoked.
 func (r *Route) prepareVars(pairs ...string) (map[string]string, error) {

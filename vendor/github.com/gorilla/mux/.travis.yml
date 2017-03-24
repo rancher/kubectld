@@ -1,5 +1,6 @@
 language: go
 sudo: false
+<<<<<<< HEAD
 go:
   - 1.3
   - 1.4
@@ -10,5 +11,24 @@ install:
 script:
   - go get -t -v ./...
   - diff -u <(echo -n) <(gofmt -d -s .)
+=======
+
+matrix:
+  include:
+    - go: 1.2
+    - go: 1.3
+    - go: 1.4
+    - go: 1.5
+    - go: 1.6
+    - go: 1.7
+    - go: tip
+
+install:
+  - # Skip
+
+script:
+  - go get -t -v ./...
+  - diff -u <(echo -n) <(gofmt -d .)
+>>>>>>> a24f8b0... add support for installing helm charts
   - go tool vet .
   - go test -v -race ./...
