@@ -33,7 +33,7 @@ func DeleteHelmStack(stack *Stack) error {
 	if !releaseFound {
 		return nil
 	}
-	args := []string{"delete", stack.Name}
+	args := []string{"delete", "--purge", stack.Name}
 	output := cli.Execute(cmd, args...)
 	if brokenRelease {
 		log.Infof("Tried to delete %s, err: %v", stack.Name, output.Err)
