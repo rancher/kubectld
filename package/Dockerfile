@@ -2,9 +2,9 @@ FROM ubuntu:15.10
 RUN apt-get update && \
     apt-get install -y vim wget
 RUN apt-get install -y bash-completion
-RUN wget -O /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.5.4/bin/linux/amd64/kubectl && \
+RUN wget -O /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.6.0/bin/linux/amd64/kubectl && \
     chmod +x /usr/bin/kubectl
-RUN wget -O helm.tar.gz http://storage.googleapis.com/kubernetes-helm/helm-v2.1.3-linux-amd64.tar.gz && \
+RUN wget -O helm.tar.gz http://storage.googleapis.com/kubernetes-helm/helm-v2.2.3-linux-amd64.tar.gz && \
     tar xvzf helm.tar.gz && \
     mv ./linux-amd64/helm /usr/bin/ && \
     chmod +x /usr/bin/helm
