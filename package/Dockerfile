@@ -20,6 +20,8 @@ ENV LISTEN :8091
 ENV HOME /tmp
 RUN cp /etc/skel/.bashrc /tmp/ && \
     echo 'PS1="> "' >> /tmp/.bashrc && \
-    echo . /etc/bash_completion >> /tmp/.bashrc
+    echo . /etc/bash_completion >> /tmp/.bashrc && \
+    echo 'alias k="kubectl"' >> /tmp/.bashrc && \
+    echo 'alias ks="kubectl -n kube-system"' >> /tmp/.bashrc
 WORKDIR $HOME 
 CMD ["kubectld.sh"]
