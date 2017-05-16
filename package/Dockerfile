@@ -1,4 +1,4 @@
-FROM ubuntu:15.10
+FROM rancher/agent-base:v0.3.0
 RUN apt-get update && \
     apt-get install -y vim wget
 RUN apt-get install -y bash-completion
