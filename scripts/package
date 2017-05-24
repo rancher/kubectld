@@ -9,6 +9,8 @@ TAG=${TAG:-${VERSION}}
 REPO=${REPO:-rancher}
 
 cp ../bin/kubectld .
-docker build -t ${REPO}/kubectld:${TAG} .
 
-echo Built ${REPO}/kubectld:${TAG}
+IMAGE=${REPO}/kubectld:${TAG}
+docker build -t ${IMAGE} .
+echo ${IMAGE} > ../dist/images
+echo Built ${IMAGE}
