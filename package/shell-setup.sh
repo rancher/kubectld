@@ -5,9 +5,10 @@ token=$1
 
 mkdir -p /nonexistent
 mount -t tmpfs tmpfs /nonexistent
+cd /nonexistent
 
-mkdir /nonexistent/.kube
-tee /nonexistent/.kube/config <<EOF
+mkdir .kube
+tee .kube/config <<EOF
 apiVersion: v1
 kind: Config
 clusters:
@@ -27,10 +28,10 @@ users:
     token: "$token"
 EOF
 
-cp /etc/skel/.bashrc /nonexistent
-echo 'PS1="> "' >> /nonexistent/.bashrc
-echo . /etc/bash_completion >> /nonexistent/.bashrc
-echo 'alias k="kubectl"' >> /nonexistent/.bashrc
-echo 'alias ks="kubectl -n kube-system"' >> /nonexistent/.bashrc
+cp /etc/skel/.bashrc .
+echo 'PS1="> "' >> .bashrc
+echo . /etc/bash_completion >> .bashrc
+echo 'alias k="kubectl"' >> .bashrc
+echo 'alias ks="kubectl -n kube-system"' >> .bashrc
 
 exec su -s /bin/bash nobody
