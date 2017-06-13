@@ -34,4 +34,6 @@ echo . /etc/bash_completion >> .bashrc
 echo 'alias k="kubectl"' >> .bashrc
 echo 'alias ks="kubectl -n kube-system"' >> .bashrc
 
+chmod 777 .kube .kube/config .bashrc
+
 exec su -s /bin/bash nobody
