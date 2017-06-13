@@ -36,7 +36,8 @@ alias k="kubectl"
 alias ks="kubectl -n kube-system"
 EOF
 
-chmod 777 .kube .kube/config .bashrc
+chmod 777 .kube .bashrc
+chmod 666 .kube/config
 
 for i in $(env | cut -d "=" -f 1 | grep "CATTLE\|RANCHER"); do
     unset $i
