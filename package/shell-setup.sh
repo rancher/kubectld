@@ -36,4 +36,8 @@ echo 'alias ks="kubectl -n kube-system"' >> .bashrc
 
 chmod 777 .kube .kube/config .bashrc
 
+for i in $(env | cut -d "=" -f 1 | grep "CATTLE\|RANCHER"); do
+    unset $i
+done
+
 exec su -s /bin/bash nobody
