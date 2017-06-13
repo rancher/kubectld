@@ -8,7 +8,7 @@ mount -t tmpfs tmpfs /nonexistent
 cd /nonexistent
 
 mkdir .kube
-tee .kube/config <<EOF
+cat <<EOF > .kube/config
 apiVersion: v1
 kind: Config
 clusters:
@@ -29,10 +29,12 @@ users:
 EOF
 
 cp /etc/skel/.bashrc .
-echo 'PS1="> "' >> .bashrc
-echo . /etc/bash_completion >> .bashrc
-echo 'alias k="kubectl"' >> .bashrc
-echo 'alias ks="kubectl -n kube-system"' >> .bashrc
+cat >> .bashrc <<EOF
+PS1="> "
+. /etc/bash_completion
+alias k="kubectl"
+alias ks="kubectl -n kube-system"
+EOF
 
 chmod 777 .kube .kube/config .bashrc
 
