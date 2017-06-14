@@ -5,9 +5,10 @@ token=$1
 
 mkdir -p /nonexistent
 mount -t tmpfs tmpfs /nonexistent
+cd /nonexistent
 
-mkdir /nonexistent/.kube
-tee /nonexistent/.kube/config <<EOF
+mkdir .kube
+cat <<EOF > .kube/config
 apiVersion: v1
 kind: Config
 clusters:
@@ -27,10 +28,19 @@ users:
     token: "$token"
 EOF
 
-cp /etc/skel/.bashrc /nonexistent
-echo 'PS1="> "' >> /nonexistent/.bashrc
-echo . /etc/bash_completion >> /nonexistent/.bashrc
-echo 'alias k="kubectl"' >> /nonexistent/.bashrc
-echo 'alias ks="kubectl -n kube-system"' >> /nonexistent/.bashrc
+cp /etc/skel/.bashrc .
+cat >> .bashrc <<EOF
+PS1="> "
+. /etc/bash_completion
+alias k="kubectl"
+alias ks="kubectl -n kube-system"
+EOF
+
+chmod 777 .kube .bashrc
+chmod 666 .kube/config
+
+for i in $(env | cut -d "=" -f 1 | grep "CATTLE\|RANCHER"); do
+    unset $i
+done
 
 exec su -s /bin/bash nobody
