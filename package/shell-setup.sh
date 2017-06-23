@@ -20,6 +20,7 @@ clusters:
 contexts:
 - context:
     cluster: "Default"
+    user: "Default"
   name: "Default"
 current-context: "Default"
 users:
