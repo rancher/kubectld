@@ -26,7 +26,7 @@ current-context: "Default"
 users:
 - name: "Default"
   user:
-    token: "$token"
+    token: "$(echo -n $token | base64)"
 EOF
 
 cp /etc/skel/.bashrc .
