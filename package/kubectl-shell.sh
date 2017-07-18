@@ -10,6 +10,6 @@ fi
 
 echo "# Run kubectl commands inside here"
 echo "# e.g. kubectl get all"
-export TERM=xterm-256color
+export TERM=screen-256color
 
 unshare --fork --pid --mount-proc --mount shell-setup.sh ${token}
