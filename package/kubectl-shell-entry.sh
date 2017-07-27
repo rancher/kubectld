@@ -19,4 +19,4 @@ if [ -n "$ACTION" ]; then
     rm certs.zip cert.pem key.pem
 fi
 
-sleep infinity
+nc -k -l 10240 > /dev/null 2>&1
