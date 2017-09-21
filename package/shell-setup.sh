@@ -14,8 +14,8 @@ kind: Config
 clusters:
 - cluster:
     api-version: v1
-    certificate-authority: /etc/kubernetes/ssl/ca.pem
-    server: "https://kubernetes.kubernetes.rancher.internal:6443"
+    certificate-authority: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+    server: "https://$KUBERNETES_SERVICE_HOST:$KUBERNETES_SERVICE_PORT"
   name: "Default"
 contexts:
 - context:
@@ -26,7 +26,7 @@ current-context: "Default"
 users:
 - name: "Default"
   user:
-    token: "$(echo -n $token | base64)"
+    token: "$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 EOF
 
 cp /etc/skel/.bashrc .
