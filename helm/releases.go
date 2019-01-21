@@ -14,7 +14,7 @@ func ListReleases() ([]Release, error) {
 	args := []string{"ls"}
 	output := cli.Execute(cmd, args...)
 	if output.ExitCode > 0 {
-		return nil, &cli.ErrExec{output}
+		return nil, &cli.ErrExec{Output: output}
 	}
 	if output.Err != nil {
 		return nil, output.Err
