@@ -11,7 +11,7 @@ func StartEventHandler(url, accessKey, secretKey string, workers int) error {
 		"kubernetesStack.rollback":      rollback,
 		"kubernetesStack.remove":        remove,
 		"kubernetesStack.finishupgrade": finishUpgrade,
-		"ping": ping,
+		"ping":                          ping,
 	}
 
 	router, err := revents.NewEventRouter("", 0, url, accessKey, secretKey, nil, eventHandlers, "", workers, revents.DefaultPingConfig)
